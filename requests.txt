@@ -1,0 +1,6 @@
+# 依赖环境 python3.x
+pandas
+numpy
+getopt
+regex
+jieba
