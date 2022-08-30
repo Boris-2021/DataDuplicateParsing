@@ -271,7 +271,4 @@ if __name__ == "__main__":
     df_list = read_excel_re(file_name)
     scan_list(df_list, threshold)
 
-    '''
-    df_list = read_excel_re("../浙江全量线路OMS.xlsx")
-    scan_list(df_list)
-    '''
+
