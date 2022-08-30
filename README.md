@@ -12,7 +12,7 @@ data文件夹中放入原始数据。
 
 
 使用实例：
-命令行：python datahandle_jieba.py -f data/浙江全量线路OMS.xlsx -t 0.8
+命令行：python datahandle_jieba.py -f data/data.xlsx -t 0.8
 参数说明：-f 原始文件路径，-t 选择聚类的相似度阈值
 
 等待进度条完成100%，生成新的文件。
