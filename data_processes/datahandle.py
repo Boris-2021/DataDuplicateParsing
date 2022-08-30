@@ -227,10 +227,9 @@ if __name__ == "__main__":
     scan_list(df_list, threshold)
 
     '''
-    df_list = read_excel("../浙江全量线路OMS.xlsx")
+    df_list = read_excel("../O.xlsx")
     scan_list(df_list)
-    list1 = ['240000987', '写鸟DPUM线潜明F接线', '缙克.虚拟.缙克F接站', '潜明电站', 38]
-    list2 = ['240000988', '搬上PQGD线', '江欧.搬莫变', '请也.上票变', 35]
+
     '''
 
     pass
