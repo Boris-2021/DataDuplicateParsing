@@ -232,6 +232,7 @@ def progress_bar(finish_tasks_number, tasks_number):
     print("\r进度: {}%: ".format(percentage), "▓" * (int(percentage) // 2), end="")
     sys.stdout.flush()
 
+
 if __name__ == "__main__":
     file_name, threshold = main_input(sys.argv[1:])
     df_list = read_excel_jieba(file_name)
