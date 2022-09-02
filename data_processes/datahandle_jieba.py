@@ -237,10 +237,7 @@ if __name__ == "__main__":
     df_list = read_excel_jieba(file_name)
     scan_list(df_list, threshold)
 
-    '''
-    df_list = read_excel_jieba("../浙江全量线路OMS.xlsx")
-    # scan_list(df_list)
-    '''
+
 
 
     # s1 = {'仙门', '1272', '五丰', 'T接线', '丽水', '五丰变', '115', '2', 'ls', '虚拟', '9'}
