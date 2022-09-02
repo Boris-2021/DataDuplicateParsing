@@ -113,6 +113,7 @@ def scan_list(df_list, threshold=0.8):
 
                 '''new_cluster_element追加写入res.txt'''
                 # write_append('res.txt', str(new_cluster_element))
+            # break
 
         # print(del_index_list)
         # 删除已经添加到簇中的元素
@@ -124,6 +125,7 @@ def scan_list(df_list, threshold=0.8):
         # 簇ID加1
         clusterId += 1
         # print("*" * 80)
+        # break
 
     # cluster_list转成DataFrame格式
     cluster_list_df = pd.DataFrame(cluster_list,
@@ -150,20 +152,37 @@ def SimSeq2set(list1, list2):
     :return:
     '''
     # 将list[-1]转化为str
-    list1[-1], list2[-1] = str(list1[-1]), str(list2[-1])
-    # list1[1:]展开成一维
-    seq1, seq2 = [i for arr in list1[1:] for i in arr], [i for arr in list2[1:] for i in arr]
+    list1_1, list2_2 = str(list1[-1]), str(list2[-1])
 
-    sim_score = jaccard_similarity(seq1, seq2)
+    # list1[1:]展开成一维
+    seq1, seq2 = [i for arr in list1[1:-1] for i in arr], [i for arr in list2[1:-1] for i in arr]
+    seq1.append(list1_1)
+    seq2.append(list2_2)
     # print(seq1, seq2)
+    sim_score = jaccard_similarity(seq1, seq2)
+
+    if "虚拟" in seq2[-4] and seq2[-4]==seq1[-4]:
+        # 出场站都是虚拟站，削弱评分
+        if seq2[-7] != seq1[-7]:  # 入场站不同削弱得分
+            return sim_score-0.50
+        return sim_score-0.05
     return sim_score
 
 
 # Jaccard 相似度
 def jaccard_similarity(s1, s2):
     s1, s2 = set(s1), set(s2)
-    # print(s1, s2)
-    score = len(s1 & s2) / len(s1 | s2)
+    s3 = s1 & s2
+    s4 = s1 | s2
+    # 统计两个都有虚拟情况，进行得分削减
+    count_ = 0
+    for i in s3:
+        if "虚拟" in i:
+            count_+=1
+
+    # 集合中去除虚拟场站元素的计算 / 分子去除计算
+    score = (len(s3) - count_) / (len(s4)-count_)
+
     # score保留两位小数
     score = round(score, 2)
     # print(score)
@@ -223,3 +242,6 @@ if __name__ == "__main__":
     # scan_list(df_list)
     '''
 
+
+    # s1 = {'仙门', '1272', '五丰', 'T接线', '丽水', '五丰变', '115', '2', 'ls', '虚拟', '9'}
+    # s2 = {'仙门', '1272', '雁门', 'T接线', '丽水', '雁门变', '115', '2', 'ls', '虚拟', '9'}
