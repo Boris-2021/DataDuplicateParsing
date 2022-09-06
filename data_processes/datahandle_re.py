@@ -120,7 +120,7 @@ def scan_list(df_list, threshold=0.8):
         # print(type(df_list))
         now_len = len(df_list)
         # 展示进度
-        progress_bar(total_len-now_len, total_len)
+        progress_bar(total_len - now_len, total_len)
         # 簇ID加1
         clusterId += 1
         # print("*" * 80)
@@ -128,7 +128,8 @@ def scan_list(df_list, threshold=0.8):
     # print(cluster_list)
     # cluster_list转成DataFrame格式
     cluster_list_df = pd.DataFrame(cluster_list,
-                                   columns=['aclineid', 'name_org', 'name', 'i_node', 'j_node', 'volt', 'clusterId', 'sim_score'])
+                                   columns=['aclineid', 'name_org', 'name', 'i_node', 'j_node', 'volt', 'clusterId',
+                                            'sim_score'])
     # cluster_list_df["i_node"] 拼接回来
 
     cluster_list_df["i_node_org"] = cluster_list_df["i_node"].apply(lambda x: ".".join([i for i in x if i]))
@@ -136,7 +137,7 @@ def scan_list(df_list, threshold=0.8):
     cluster_list_df["j_node_org"] = cluster_list_df["j_node"].apply(lambda x: ".".join([i for i in x if i]))
     # 字段顺序调整
     cluster_list_df = cluster_list_df[
-        ['aclineid', 'name', 'name_org',  'i_node', 'i_node_org', 'j_node', 'j_node_org', 'volt', 'clusterId',
+        ['aclineid', 'name', 'name_org', 'i_node', 'i_node_org', 'j_node', 'j_node_org', 'volt', 'clusterId',
          'sim_score']]
 
     '''保存文件csv'''
@@ -154,9 +155,11 @@ def SimSeq2list(list1, list2):
     list1_1, list2_2 = str(list1[-1]), str(list2[-1])
     # list1[1:]展开成一维
     # print(list1,list2)
-    indx_xianlu, indx_changzhan  = [1, 2, 5, 6],[2,3,4]
-    seq1 = [list1[2][i] for i in indx_xianlu] + [list1[3][i] for i in indx_changzhan] + [list1[4][i] for i in indx_changzhan]
-    seq2 = [list2[2][i] for i in indx_xianlu] + [list2[3][i] for i in indx_changzhan] + [list2[4][i] for i in indx_changzhan]
+    indx_xianlu, indx_changzhan = [1, 2, 3, 5, 6], [2, 3, 4]  # 2,3,4
+    seq1 = [list1[2][i] for i in indx_xianlu] + [list1[3][i] for i in indx_changzhan] + [list1[4][i] for i in
+                                                                                         indx_changzhan]
+    seq2 = [list2[2][i] for i in indx_xianlu] + [list2[3][i] for i in indx_changzhan] + [list2[4][i] for i in
+                                                                                         indx_changzhan]
     seq1.append(list1_1)
     seq2.append(list2_2)
     # print(seq1,seq2)
@@ -164,12 +167,24 @@ def SimSeq2list(list1, list2):
     # print(seq1, "\n", seq2)
     return sim_score
 
+
 # Jaccard 相似度
 def seq_similarity(s1, s2):
+    # print(s1,s2)
     sim_count = 0
-    for a,b in zip(s1,s2):
-        if a == b:
-            sim_count += 1
+    for i in range(len(s1)):
+        if i == 5:
+            if s1[5] == s2[5] or s1[5] == s2[8]:
+                sim_count += 1
+        elif i == 8:
+            if s1[8] == s2[8] or s1[8] == s2[5]:
+                sim_count += 1
+        else:
+            if s1[i] == s2[i]:
+                sim_count += 1
+        # if s1[i] == s2[i]:
+        #     sim_count+=1
+
     sim_score = sim_count / len(s1)
     sim_score = round(sim_score, 2)
     # print(sim_score)
