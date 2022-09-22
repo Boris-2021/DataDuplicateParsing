@@ -100,6 +100,7 @@ def scan_list(df_list, threshold=0.8):
             # print(df_list[start])
             # print(df_list[i])
             sim_score = SimSeq2set(df_list[start], df_list[i])
+
             if sim_score >= float(threshold):
                 # 如果相似度大于0.5，则添加到簇中
                 new_cluster_element = df_list[i].copy()
@@ -153,6 +154,21 @@ def SimSeq2set(list1, list2):
     '''
     # 将list[-1]转化为str
     list1_1, list2_2 = str(list1[-1]), str(list2[-1])
+    # print(list1,list2)
+    # 判断线段名称是否存在  省.地名 ,且出入场站不包含“虚拟”这种情况
+    if "." in list1[1] or "." in list2[1]:
+        node_out_in = "".join(list1[2]+list1[3]+list2[2]+list2[3])  # 判断出入场站有没有“虚拟”
+        if "虚拟" not in node_out_in:
+            line1 = "".join(list1[1])
+            line2 = "".join(list2[1])
+            # print(line1, line2)
+            # 如果.在字符串中删除.之前的内容
+            line1 = line1.split(".")[1] if "." in line1 else line1
+            line2 = line2.split(".")[1] if "." in line2 else line2
+
+            if line1 == line2: # 线路去除省之后相同，名称相同基本认定为同线路，不需要继续判断。
+                sim_score = 0.99
+                return sim_score
 
     # list1[1:]展开成一维
     seq1, seq2 = [i for arr in list1[1:-1] for i in arr], [i for arr in list2[1:-1] for i in arr]
@@ -160,12 +176,13 @@ def SimSeq2set(list1, list2):
     seq2.append(list2_2)
     # print(seq1, seq2)
     sim_score = jaccard_similarity(seq1, seq2)
-
+    # 在以上的基础上，如果出场站都是虚拟站，进一步削弱评分
     if "虚拟" in seq2[-4] and seq2[-4]==seq1[-4]:
         # 出场站都是虚拟站，削弱评分
-        if seq2[-7] != seq1[-7]:  # 入场站不同削弱得分
-            return sim_score-0.50
-        return sim_score-0.05
+        if seq2[-7] != seq1[-7]:  # 入场站又不同基本不是同线路，评分直接砍0.5以下。
+            sim_score = sim_score-0.50
+        sim_score = sim_score-0.05
+
     return sim_score
 
 
@@ -181,7 +198,8 @@ def jaccard_similarity(s1, s2):
             count_+=1
 
     # 集合中去除虚拟场站元素的计算 / 分子去除计算
-    score = (len(s3) - count_) / (len(s4)-count_)
+    # score = (len(s3) - count_) / (len(s4)-count_)
+    score = (len(s3) - count_) / len(s4)
 
     # score保留两位小数
     score = round(score, 2)
@@ -218,6 +236,7 @@ def main_input(argv):
         print("error args: {0}".format(args))
         return None, None
 
+
 # 展示进度
 def progress_bar(finish_tasks_number, tasks_number):
     """
@@ -231,6 +250,7 @@ def progress_bar(finish_tasks_number, tasks_number):
     percentage = round(float(finish_tasks_number / tasks_number * 100), 1)
     print("\r进度: {}%: ".format(percentage), "▓" * (int(percentage) // 2), end="")
     sys.stdout.flush()
+
 
 
 if __name__ == "__main__":
